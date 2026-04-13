@@ -14,6 +14,12 @@ body {
   overflow-x: hidden;
 }
 
+html.page--home-locked,
+body.page--home-locked {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 body {
   min-height: 100%;
   color: var(--foreground);
@@ -37,6 +43,8 @@ a {
 .hero {
   position: relative;
   min-height: 100vh;
+  min-height: 100svh;
+  min-height: 100dvh;
   overflow: hidden;
   isolation: isolate;
   display: grid;
@@ -207,7 +215,7 @@ a {
   }
 
   .hero__footnote {
-    bottom: 2.25rem;
+    bottom: 3.5rem;
   }
 
   .hero__eyebrow {

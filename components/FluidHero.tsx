@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+
 import SplashCursor from "@/components/SplashCursor";
 
 const moltenPalette = [
@@ -11,6 +13,16 @@ const moltenPalette = [
 
 export function FluidHero() {
   const year = new Date().getFullYear();
+
+  useEffect(() => {
+    document.documentElement.classList.add("page--home-locked");
+    document.body.classList.add("page--home-locked");
+
+    return () => {
+      document.documentElement.classList.remove("page--home-locked");
+      document.body.classList.remove("page--home-locked");
+    };
+  }, []);
 
   return (
     <main className="hero">
