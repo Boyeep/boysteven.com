@@ -206,6 +206,10 @@ a {
     padding-inline: 1rem;
   }
 
+  .hero__footnote {
+    bottom: 2.25rem;
+  }
+
   .hero__eyebrow {
     font-size: 0.63rem;
     letter-spacing: 0.18em;
