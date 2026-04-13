@@ -490,13 +490,15 @@ export default function SplashCursor({
       varying vec2 vUv;
       uniform sampler2D uTarget;
       uniform float aspectRatio;
+      uniform vec2 splatShape;
       uniform vec3 color;
       uniform vec2 point;
       uniform float radius;
 
       void main () {
           vec2 p = vUv - point.xy;
-          p.x *= aspectRatio;
+          p.x *= aspectRatio * splatShape.x;
+          p.y *= splatShape.y;
           vec3 splat = exp(-dot(p, p) / radius) * color;
           vec3 base = texture2D(uTarget, vUv).xyz;
           gl_FragColor = vec4(base + splat, 1.0);
@@ -1117,9 +1119,11 @@ export default function SplashCursor({
     function splatPointer(pointer: Pointer) {
       const isPortraitTouch = pointer.id !== -1 && isPortraitViewport();
       const dx = pointer.deltaX * config.SPLAT_FORCE * (isPortraitTouch ? 0.9 : 1);
-      const dy = pointer.deltaY * config.SPLAT_FORCE * (isPortraitTouch ? 0.62 : 1);
-      const radiusMultiplier = isPortraitTouch ? 0.68 : 1;
-      splat(pointer.texcoordX, pointer.texcoordY, dx, dy, pointer.color, radiusMultiplier);
+      const dy = pointer.deltaY * config.SPLAT_FORCE * (isPortraitTouch ? 0.28 : 1);
+      const radiusMultiplier = isPortraitTouch ? 0.46 : 1;
+      const shapeX = isPortraitTouch ? 0.74 : 1;
+      const shapeY = isPortraitTouch ? 1.75 : 1;
+      splat(pointer.texcoordX, pointer.texcoordY, dx, dy, pointer.color, radiusMultiplier, shapeX, shapeY);
     }
 
     function clickSplat(pointer: Pointer) {
@@ -1132,13 +1136,25 @@ export default function SplashCursor({
       splat(pointer.texcoordX, pointer.texcoordY, dx, dy, color);
     }
 
-    function splat(x: number, y: number, dx: number, dy: number, color: ColorRGB, radiusMultiplier = 1) {
+    function splat(
+      x: number,
+      y: number,
+      dx: number,
+      dy: number,
+      color: ColorRGB,
+      radiusMultiplier = 1,
+      shapeX = 1,
+      shapeY = 1
+    ) {
       splatProgram.bind();
       if (splatProgram.uniforms.uTarget) {
         gl.uniform1i(splatProgram.uniforms.uTarget, velocity.read.attach(0));
       }
       if (splatProgram.uniforms.aspectRatio) {
         gl.uniform1f(splatProgram.uniforms.aspectRatio, canvas!.width / canvas!.height);
+      }
+      if (splatProgram.uniforms.splatShape) {
+        gl.uniform2f(splatProgram.uniforms.splatShape, shapeX, shapeY);
       }
       if (splatProgram.uniforms.point) {
         gl.uniform2f(splatProgram.uniforms.point, x, y);
@@ -1200,10 +1216,12 @@ export default function SplashCursor({
       pointer.deltaX = correctDeltaX(pointer.texcoordX - pointer.prevTexcoordX)!;
       pointer.deltaY = correctDeltaY(pointer.texcoordY - pointer.prevTexcoordY)!;
       if (isTouch && isPortraitViewport()) {
-        pointer.deltaX *= 1.65;
-        pointer.deltaY *= 0.38;
+        pointer.deltaX *= 1.9;
+        pointer.deltaY *= 0.22;
+        const maxVerticalDelta = Math.max(Math.abs(pointer.deltaX) * 0.4, 0.001);
+        pointer.deltaY = Math.sign(pointer.deltaY) * Math.min(Math.abs(pointer.deltaY), maxVerticalDelta);
       }
-      const moveThreshold = isTouch && isPortraitViewport() ? 0.0018 : 0;
+      const moveThreshold = isTouch && isPortraitViewport() ? 0.0024 : 0;
       pointer.moved = Math.abs(pointer.deltaX) > moveThreshold || Math.abs(pointer.deltaY) > moveThreshold;
       pointer.color = color;
     }
