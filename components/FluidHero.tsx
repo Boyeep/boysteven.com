@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
+import { GradientText } from "@/components/GradientText";
 import SplashCursor from "@/components/SplashCursor";
 
 const moltenPalette = [
@@ -13,19 +14,27 @@ const moltenPalette = [
 
 export function FluidHero() {
   const year = new Date().getFullYear();
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     document.documentElement.classList.add("page--home-locked");
     document.body.classList.add("page--home-locked");
 
+    const revealTimer = window.setTimeout(() => {
+      requestAnimationFrame(() => {
+        setIsLoaded(true);
+      });
+    }, 320);
+
     return () => {
+      window.clearTimeout(revealTimer);
       document.documentElement.classList.remove("page--home-locked");
       document.body.classList.remove("page--home-locked");
     };
   }, []);
 
   return (
-    <main className="hero">
+    <main className="hero" data-loaded={isLoaded ? "true" : "false"}>
       <div className="hero__backdrop">
         <SplashCursor
           className="hero__splash"
@@ -44,14 +53,33 @@ export function FluidHero() {
           COLOR_UPDATE_SPEED={40}
         />
       </div>
+      <div className="hero__reveal" />
       <div className="hero__topline" />
       <div className="hero__vignette" />
       <div className="hero__grain" />
 
       <section className="hero__content">
         <p className="hero__eyebrow">Digital craft and immersive identity</p>
-        <h1 className="hero__title">BOY STEVEN</h1>
-        <p className="hero__subtitle">FULL-STACK PROGRAMMER</p>
+        <h1 className="hero__title">
+          <GradientText
+            as="span"
+            className="hero__titleGradient"
+            colors={["#fff8e7", "#f6d47a", "#c8841f", "#fff8e7"]}
+            animationSpeed={12}
+          >
+            BOY STEVEN
+          </GradientText>
+        </h1>
+        <p className="hero__subtitle">
+          <GradientText
+            as="span"
+            className="hero__subtitleGradient"
+            colors={["#fff7dd", "#e8c365", "#9a6619", "#fff7dd"]}
+            animationSpeed={16}
+          >
+            FULL-STACK PROGRAMMER
+          </GradientText>
+        </p>
 
         <div className="hero__actions">
           <a className="hero__button" href="#selected-work">

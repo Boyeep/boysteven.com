@@ -905,8 +905,10 @@ export default function SplashCursor({
     let colorUpdateTimer = 0.0;
     let animationFrameId = 0;
     let animationStarted = false;
+    let introSeeded = false;
 
     updateKeywords();
+    resizeCanvas();
     initFramebuffers();
 
     function updateFrame() {
@@ -923,8 +925,42 @@ export default function SplashCursor({
       if (animationStarted) return;
       animationStarted = true;
       lastUpdateTime = Date.now();
-      resizeCanvas();
+      if (resizeCanvas()) initFramebuffers();
       updateFrame();
+    }
+
+    function generateIntroColor(multiplier = 1.85): ColorRGB {
+      const color = generateColor();
+      return {
+        r: Math.min(color.r * multiplier, 1),
+        g: Math.min(color.g * multiplier, 1),
+        b: Math.min(color.b * multiplier, 1)
+      };
+    }
+
+    function seedIntroScene() {
+      if (introSeeded) return;
+
+      const introSplats = [
+        { x: 0.5, y: 0.54, dx: 0, dy: -24, radiusMultiplier: 2.4, brightness: 2.4 },
+        { x: 0.43, y: 0.56, dx: 30, dy: -10, radiusMultiplier: 1.8, brightness: 1.9 },
+        { x: 0.57, y: 0.5, dx: -22, dy: 16, radiusMultiplier: 1.8, brightness: 1.9 },
+        { x: 0.5, y: 0.46, dx: 12, dy: 26, radiusMultiplier: 1.6, brightness: 1.7 }
+      ];
+
+      for (const introSplat of introSplats) {
+        splat(
+          introSplat.x,
+          introSplat.y,
+          introSplat.dx,
+          introSplat.dy,
+          generateIntroColor(introSplat.brightness),
+          introSplat.radiusMultiplier
+        );
+      }
+
+      render(null);
+      introSeeded = true;
     }
 
     function calcDeltaTime() {
@@ -1240,6 +1276,9 @@ export default function SplashCursor({
       if (range === 0) return min;
       return ((value - min) % range) + min;
     }
+
+    seedIntroScene();
+    startAnimation();
 
     const handleMouseDown = (e: MouseEvent) => {
       const pointer = pointers[0];
