@@ -1115,10 +1115,9 @@ export default function SplashCursor({
     }
 
     function splatPointer(pointer: Pointer) {
-      const isPortraitTouch = pointer.id !== -1 && isPortraitViewport();
-      const dx = pointer.deltaX * config.SPLAT_FORCE * (isPortraitTouch ? 0.9 : 1);
-      const dy = pointer.deltaY * config.SPLAT_FORCE * (isPortraitTouch ? 0.62 : 1);
-      const radiusMultiplier = isPortraitTouch ? 0.68 : 1;
+      const dx = pointer.deltaX * config.SPLAT_FORCE;
+      const dy = pointer.deltaY * config.SPLAT_FORCE;
+      const radiusMultiplier = pointer.id !== -1 && isPortraitViewport() ? 1.28 : 1;
       splat(pointer.texcoordX, pointer.texcoordY, dx, dy, pointer.color, radiusMultiplier);
     }
 
@@ -1200,11 +1199,10 @@ export default function SplashCursor({
       pointer.deltaX = correctDeltaX(pointer.texcoordX - pointer.prevTexcoordX)!;
       pointer.deltaY = correctDeltaY(pointer.texcoordY - pointer.prevTexcoordY)!;
       if (isTouch && isPortraitViewport()) {
-        pointer.deltaX *= 1.65;
-        pointer.deltaY *= 0.38;
+        pointer.deltaX *= 1.08;
+        pointer.deltaY *= 0.68;
       }
-      const moveThreshold = isTouch && isPortraitViewport() ? 0.0018 : 0;
-      pointer.moved = Math.abs(pointer.deltaX) > moveThreshold || Math.abs(pointer.deltaY) > moveThreshold;
+      pointer.moved = Math.abs(pointer.deltaX) > 0 || Math.abs(pointer.deltaY) > 0;
       pointer.color = color;
     }
 
