@@ -1110,10 +1110,15 @@ export default function SplashCursor({
       blit(target, false);
     }
 
+    function isPortraitViewport() {
+      return canvas!.height > canvas!.width;
+    }
+
     function splatPointer(pointer: Pointer) {
       const dx = pointer.deltaX * config.SPLAT_FORCE;
       const dy = pointer.deltaY * config.SPLAT_FORCE;
-      splat(pointer.texcoordX, pointer.texcoordY, dx, dy, pointer.color);
+      const radiusMultiplier = pointer.id !== -1 && isPortraitViewport() ? 1.28 : 1;
+      splat(pointer.texcoordX, pointer.texcoordY, dx, dy, pointer.color, radiusMultiplier);
     }
 
     function clickSplat(pointer: Pointer) {
@@ -1186,13 +1191,17 @@ export default function SplashCursor({
       pointer.color = color;
     }
 
-    function updatePointerMoveData(pointer: Pointer, posX: number, posY: number, color: ColorRGB) {
+    function updatePointerMoveData(pointer: Pointer, posX: number, posY: number, color: ColorRGB, isTouch = false) {
       pointer.prevTexcoordX = pointer.texcoordX;
       pointer.prevTexcoordY = pointer.texcoordY;
       pointer.texcoordX = posX / canvas!.width;
       pointer.texcoordY = 1 - posY / canvas!.height;
       pointer.deltaX = correctDeltaX(pointer.texcoordX - pointer.prevTexcoordX)!;
       pointer.deltaY = correctDeltaY(pointer.texcoordY - pointer.prevTexcoordY)!;
+      if (isTouch && isPortraitViewport()) {
+        pointer.deltaX *= 1.08;
+        pointer.deltaY *= 0.68;
+      }
       pointer.moved = Math.abs(pointer.deltaX) > 0 || Math.abs(pointer.deltaY) > 0;
       pointer.color = color;
     }
@@ -1290,7 +1299,7 @@ export default function SplashCursor({
       for (let i = 0; i < touches.length; i++) {
         const posX = scaleByPixelRatio(touches[i].clientX);
         const posY = scaleByPixelRatio(touches[i].clientY);
-        updatePointerMoveData(pointer, posX, posY, pointer.color);
+        updatePointerMoveData(pointer, posX, posY, pointer.color, true);
       }
     };
 
@@ -1361,4 +1370,3 @@ export default function SplashCursor({
     </div>
   );
 }
-
