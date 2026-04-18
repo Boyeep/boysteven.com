@@ -42,13 +42,13 @@ export function FluidHero() {
           BACK_COLOR={{ r: 0, g: 0, b: 0 }}
           TRANSPARENT={false}
           SIM_RESOLUTION={70}
-          DYE_RESOLUTION={960}
+          DYE_RESOLUTION={1020}
           DENSITY_DISSIPATION={2.5} //2.5
           VELOCITY_DISSIPATION={0.5}
           PRESSURE={0.001}
           PRESSURE_ITERATIONS={32}
-          CURL={15} // 15
-          SPLAT_RADIUS={0.7}
+          CURL={30} // 15
+          SPLAT_RADIUS={0.2}
           SPLAT_FORCE={3000}
           COLOR_UPDATE_SPEED={40}
         />

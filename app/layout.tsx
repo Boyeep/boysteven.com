@@ -14,9 +14,9 @@ const syne = Syne({
 });
 
 export const metadata: Metadata = {
-  title: "Boysteven Molten Cursor Study",
+  title: "Boy Steven",
   description:
-    "A Next.js hero study using a SplashCursor-style liquid simulation with a dark molten-gold art direction.",
+    "Hi there, I’m Boy Steven, I'm a software engineer with a passion for building web applications. I have experience in both frontend and backend development, and I enjoy working with modern technologies to create a stunning visuals.",
 };
 
 export default function RootLayout({
